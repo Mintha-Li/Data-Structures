@@ -121,3 +121,4 @@ Past/02 线性结构/x64/Debug/02 线性结构.pdb
 .vscode/launch.json
 .vscode/settings.json
 .vscode/tasks.json
+*.exe

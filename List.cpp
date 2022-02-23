@@ -1,6 +1,8 @@
 #include <cstdio>
+#include <cstdlib>
 using namespace std;
 
+/*线性表的顺序存储结构*/
 #define MAXSIZE 20	/*存储空间初始分配量*/
 typedef int ElemType;	/*ElemType 类型根据实际情况而定，这里假定为int*/
 typedef struct{
@@ -63,3 +65,58 @@ Status ListDelete(SqList *L,int i,ElemType *e)
     return OK;
 }
 
+/*线性表的单链表存储结构*/
+typedef struct Node
+{
+    ElemType data;
+    struct Node *next;
+    
+}Node;
+typedef struct Node *LinkList;  /*定义LinkList*/
+
+/*初始条件：顺序线性表L已存在，1≤i≤ListLength(L)*/
+/*操作结果：用e返回L中第i个数据元素的值*/
+Status GetElem(LinkList L,int i,ElemType *e)
+{
+    int j;
+    LinkList p; /*声明一个指针p*/
+    p=L->next;  /*让指针p指向链表的第一个结点*/
+    j=1;    /*j为计数器*/
+    while(p&&j<i)   /*p不为空并且j还没有等于i时，循环继续*/
+    {
+        p=p->next;  /*让p指向下一个结点*/
+        ++j;
+    }
+    if(!p||j>i)
+        return ERROR;   /*第一个结点不存在*/
+    *e=p->data; /*取第i个结点的数据*/
+    return OK;
+}
+
+/*初始条件：顺序线性表L已存在，1≤i≤ListLength(L)*/
+/*操作结果：在L中第i个结点位置之前插入新的数据元素e，L的长度+1*/
+Status ListInsert(LinkList *L,int i,ElemType e)
+{
+    int j;
+    LinkList p,s;
+    p=*L;
+    j=1;
+    while(p&&j<i)   /*寻找第i-1个结点*/
+    {
+        p=p->next;
+        ++j;
+    }
+    if(!p||j>i)
+        return ERROR;   /*第i个结点不存在*/
+    s=(LinkList)malloc(sizeof(Node));   /*生成新结点*/
+    s->data=e;
+    s->next=p->next;    /*将p的后继结点赋值给s的后继*/
+    p->next=s;  /*将s赋值给p的后继*/
+    return OK;
+}
+
+int main()
+{
+    printf("hello world");
+    return 0;
+}

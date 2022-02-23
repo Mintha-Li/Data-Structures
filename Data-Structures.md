@@ -164,8 +164,94 @@ Status ListDelete(SqList *L,int i,ElemType *e)
 
 ### 3.6 线性表的链式存储结构
 
-#### 1.定义
+#### 1&2&3.概念
 
 * 数据域：存储数据
-* 指针域：
+* 指针域：存储直接后继位置
+* 结点（Node）：数据域与指针域组成的元素ai的存储映像
+* 单链表：n个结点连接成一个链表，即为线性表的链式存储结构，因为此链表中每个结点只包含一个指针域，所以叫做单链表
+* 头指针：链表中第一个结点的存储位置叫做头指针
+* 头结点：有时为了方便对链表操作，会在单链表第一个结点前附设一个结点，称为头结点
+
+无论链表是否为空，头指针均不为空。头指针是链表的必要元素。
+
+#### 4.代码描述
+
+```c
+/*线性表的单链表存储结构*/
+typedef struct Node
+{
+    ElemType data;
+    struct Node *next;
+    
+}Node;
+typedef struct Node *LinkList;  /*定义LinkList*/
+
+```
+
+### 3.7 单链表的读取
+
+算法思路：
+
+1. 声明一个指针p指向链表的第一个结点，初始化j从1开始；
+2. 当j<i时，就遍历链表，让p的指针向后移动，不断指向下一结点，j累加1；
+3. 若到链表尾p为空，则说明第i个结点不存在；
+4. 若查找成功，返回结点p的数据。
+
+```c
+/*初始条件：顺序线性表L已存在，1≤i≤ListLength(L)*/
+/*操作结果：用e返回L中第i个数据元素的值*/
+Status GetElem(LinkList L,int i,ElemType *e)
+{
+    int j;
+    LinkList p; /*声明一个指针p*/
+    p=L->next;  /*让指针p指向链表的第一个结点*/
+    j=1;    /*j为计数器*/
+    while(p&&j<i)   /*p不为空并且j还没有等于i时，循环继续*/
+    {
+        p=p->next;  /*让p指向下一个结点*/
+        ++j;
+    }
+    if(!p||j>i)
+        return ERROR;   /*第一个结点不存在*/
+    *e=p->data; /*取第i个结点的数据*/
+    return OK;
+}
+```
+
+### 3.8 单链表的插入与删除
+
+算法：
+
+1. 声明一个指针p指向链表头结点，初始化j从1开始；
+2. 当j<i时，就遍历链表，让p的指针往后移动，不断指向下一结点，j累加1；
+3. 若到链表末尾p为空，则说明第i个结点不存在；
+4. 否则查找成功，在系统中生成一个空结点s；
+5. 将数据元素e赋值给s->data；
+6. 单链表的插入标准语句`s->next=p->next;p->next=s;`
+7. 返回成功
+
+```c
+/*初始条件：顺序线性表L已存在，1≤i≤ListLength(L)*/
+/*操作结果：在L中第i个结点位置之前插入新的数据元素e，L的长度+1*/
+Status ListInsert(LinkList *L,int i,ElemType e)
+{
+    int j;
+    LinkList p,s;
+    p=*L;
+    j=1;
+    while(p&&j<i)   /*寻找第i-1个结点*/
+    {
+        p=p->next;
+        ++j;
+    }
+    if(!p||j>i)
+        return ERROR;   /*第i个结点不存在*/
+    s=(LinkList)malloc(sizeof(Node));   /*生成新结点*/
+    s->data=e;
+    s->next=p->next;    /*将p的后继结点赋值给s的后继*/
+    p->next=s;  /*将s赋值给p的后继*/
+    return OK;
+}
+```
 
