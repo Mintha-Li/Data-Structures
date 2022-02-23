@@ -1,4 +1,4 @@
-# 数据结构(Data Structure)
+# 数据结构(Data Structures)
 
 ---
 
