@@ -583,5 +583,130 @@ typedef struct DulNode
 | ------------ | --------------------------------- |
 |              | 单链表;静态链表;循环链表;双向链表 |
 
+## 第四章  栈与队列
 
+### 4.1&4.2栈定义
+
+> **栈（stack）是限定仅在表尾进行插入和删除的线性表**
+
+允许插入和删除的一段称为**栈顶**，另一端称为**栈底**，不含任何数据元素的称为**空栈**
+
+栈又称为先进后出（Last In First Out）的线性表，简称**（LIFO）结构**
+
+栈的插入操作叫做**进栈**，也叫**入栈，压栈**
+
+栈的删除操作叫做**出栈**，也叫**弹栈**
+
+### 4.3 栈的抽象数据类型
+
+```markdown
+ADT 栈(stack)
+Data
+	同线性表。元素具有相同的类型，相邻元素具有前驱和后继关系
+Operation
+	InitStack(*S):初始化操作，建立一个空栈S
+	DestroyStack(*S):若栈存在，则销毁
+	ClearStack(*S):将栈清空
+	StackEmpty(S):若栈为空，返回true，否则返回false
+	GetTop(S,*e):若栈存在且非空，则用e返回S栈顶元素
+	Push(*S,e):若栈存在，插入新元素e到栈顶S中并成为栈顶元素
+	Pop(*S,*e):删除栈顶元素，并用e返回其值
+	StackLength(S):返回栈S的元素个数
+endADT
+```
+
+### 4.4 栈的顺序存储结构
+
+#### 4.4.1栈的结构定义
+
+```c
+typedef int SElemType;  /* SElemType类型根据实际情况而定，这里假设为int */
+typedef struct 
+{
+    SElemType data[MAXSIZE];
+    int top;    /* 用作栈顶指针 */
+}SqStack;
+```
+
+#### 4.4.2栈的顺序存储结构——进栈Push
+
+```c
+/* 插入新元素成为栈顶元素 */
+Status Push(SqStack *S,ElemType e)
+{
+    if(S->top == MAXSIZE-1)     /* 栈满 */
+    {
+        return ERROR;
+    };
+    S->top++;   /* 栈顶指针+1 */
+    S->data[S->top]=e;  /* 将新元素赋值给栈顶空间 */
+    return OK;
+}
+```
+
+#### 4.4.3栈的顺序存储结构——出栈Pop
+
+```c
+/* 若栈不空，则删除栈顶元素，用e返回其值，返回OK，否则返回ERROR */
+Status Pop(SqStack *S,ElemType *e)
+{
+    if(S->top==1)
+        return ERROR;
+    *e=S->data[S->top];     /* 将要删除的栈顶元素赋值给e */
+    S->top--;               /* 栈顶指针-1 */
+    return OK;
+}
+```
+
+### 4.5 两栈共享空间
+
+结构定义
+
+```c
+/* 两栈共享空间结构 */
+typedef struct 
+{
+    SElemType data[MAXSIZE];
+    int top1;   /* 栈1栈顶指针 */
+    int top2;   /* 栈2栈顶指针 */
+}SqDoubleStack;
+```
+
+进栈
+
+```c
+/* 插入元素e成为新的栈顶元素 */
+Status Push(SqDoubleStack *S,SElemType e,int stackNumber)
+{
+    if(S->top1+1==S->top2)  /* 栈已满，不能再push元素了 */
+        return ERROR;
+    if(stackNumber==1)          /* 栈1有元素进栈 */
+        S->data[++S->top1]=e;   /* 若栈1则先top1+1后给数组赋值 */
+    else if(stackNumber==2)     /* 栈2有元素进栈 */
+        S->data[--S->top2]=e;   /* 若站2则先top2-1后给数组赋值 */
+    return OK;
+}
+```
+
+出栈
+
+```c
+/* 若栈不空，则删除S的栈顶元素，用e返回其值，并返回OK，否则返回ERROR */
+Status Pop(SqDoubleStack *S,SElemType *e,int stackNumber)
+{
+    if (stackNumber==1)
+    {
+        if(S->top1==-1)         /* 说明栈1是空栈，溢出 */
+            return ERROR;
+        *e=S->data[S->top1--];  /* 将栈1的栈顶元素出栈 */
+    }
+    else if(stackNumber==2)
+    {
+        if(S->top2==MAXSIZE)    /* 说明栈2是空栈，溢出 */
+            return ERROR;
+        *e=S->data[S->top2++];  /* 将栈2的栈顶元素出栈 */
+    }
+    return OK;
+}
+```
 
