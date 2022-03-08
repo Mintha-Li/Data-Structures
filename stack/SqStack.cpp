@@ -29,6 +29,3 @@ Status Pop(SqStack *S,ElemType *e)
     S->top--;               /* 栈顶指针-1 */
     return OK;
 }
-
-
-
